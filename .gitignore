@@ -1,0 +1,14 @@
+.idea/
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+Binaries/
+ExternalResources/
+Intermediate/
+SHOOTACUBE.uproject
+DerivedDataCache/
+Saved/
+Scripts/
