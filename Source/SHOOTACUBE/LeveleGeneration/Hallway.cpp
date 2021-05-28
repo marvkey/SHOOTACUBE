@@ -36,29 +36,53 @@ void AHallway::BeginPlay(){
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGenerateLevel::StaticClass(), FoundActors);
 	SetActorScale3D(FVector(6,6,6));
 	SpawnGenerateLevel();
+	GetWorldTimerManager().SetTimer(TImerManager,this,&AHallway::DoDestroy,2.0f,true);
+}
+
+void AHallway::DoDestroy(){
+	
+	AGenerateLevel* GenereateLevelOwner = Cast<AGenerateLevel>(GetOwner());
+	if(NewObjectSpawned == nullptr){
+		UE_LOG(LogTemp,Warning,TEXT("Actor is null %s"),*this->GetName());
+		if(GetOwner() == nullptr){
+			this->Destroy();
+			UE_LOG(LogTemp,Warning,TEXT("has no owner so it is destroyed %s"),*this->GetName());
+			return;
+		}
+		if(GenereateLevelOwner->GetSpawnType() == TypeSpawn::Main){
+			UE_LOG(LogTemp,Warning,TEXT("has spawn type of main %s"),*this->GetName());
+			return;
+		}
+		this->Destroy();
+		UE_LOG(LogTemp,Warning,TEXT("Destroyed Hallway %s"),*this->GetName());
+		
+	}
+	
 }
 
 // Called every frame
 void AHallway::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
-	if(NewObjectSpawned ==nullptr){
-	}
+	GetAllChildActors(ChildActors);
+	//DoDestroy();
 }
 
 void AHallway::SpawnGenerateLevel(){
-	if(FoundActors.Num() <10){
-		FVector SpawnLocation(FrontSide->GetComponentLocation().X,FrontSide->GetComponentLocation().Y,FrontSide->GetComponentLocation().Z);
+	if(FoundActors.Num() <=8){
+		FVector SpawnLocation(FrontSide->GetComponentLocation());
 		FRotator  RotationSpawn(0,0,0);
 		FActorSpawnParameters SpawnParam;
 		NewObjectSpawned=GetWorld()->SpawnActor<AActor>(OurSpawningObjects,SpawnLocation,RotationSpawn,SpawnParam);
 		if(NewObjectSpawned != nullptr){
 			AGenerateLevel* Level=Cast<AGenerateLevel>(NewObjectSpawned);
+			LevelGenerate =Level;
 			if(Level != nullptr){
 				FRotator GG(90,0,0);
-				Level->HallwaySpawnSceneComponent3->SetRelativeRotation(GG);
-				Level->AttachToComponent(FrontSide, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-				Level->FrontDoorSide->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				Level->FrontDoorSide->SetHiddenInGame(true);
+				LevelGenerate->HallwaySpawnSceneComponent3->SetRelativeRotation(GG);
+				LevelGenerate->AttachToComponent(FrontSide, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+				LevelGenerate->FrontDoorSide->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				LevelGenerate->FrontDoorSide->SetHiddenInGame(true);
+				LevelGenerate->SetOwner(this);
 			}
 		}
 	}

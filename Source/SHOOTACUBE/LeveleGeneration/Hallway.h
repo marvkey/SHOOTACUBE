@@ -33,13 +33,19 @@ public:
 
 	UPROPERTY(EditAnywhere, Category ="Component")
 	UStaticMeshComponent* Floor;
+
 protected:
 	virtual void BeginPlay() override;
+	void DoDestroy();
+	TArray<AActor*>ChildActors;
 	
 private:
 	UPROPERTY(EditAnywhere,Category="Spawning Objects")
 	TSubclassOf<class AActor>OurSpawningObjects;
-	class AActor* NewObjectSpawned=nullptr;
+	
+	class AActor* NewObjectSpawned;
 	void SpawnGenerateLevel();
 	TArray<AActor*> FoundActors;
+	class AGenerateLevel* LevelGenerate;
+	FTimerHandle TImerManager;
 };

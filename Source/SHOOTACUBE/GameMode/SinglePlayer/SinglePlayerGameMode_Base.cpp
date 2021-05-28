@@ -1,16 +1,19 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-#include "SHOOTACUBEGameModeBase.h"
-#include "LeveleGeneration/Hallway.h"
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "SinglePlayerGameMode_Base.h"
+
+#include "SHOOTACUBE/LeveleGeneration/Hallway.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "SHOOTACUBE/LeveleGeneration/GenerateLevel.h"
 #include "SHOOTACUBE/Player/Player1Controleer.h"
 #include "SHOOTACUBE/LeveleGeneration/SpawnGenerateLevel.h"
 #include "GameFramework/CharacterMovementComponent.h"
-ASHOOTACUBEGameModeBase::ASHOOTACUBEGameModeBase(){
+ASinglePlayerGameMode_Base::ASinglePlayerGameMode_Base(){
     PrimaryActorTick.bCanEverTick = true;
 }
 
-void ASHOOTACUBEGameModeBase::Tick(float DeltaSeconds){
+void ASinglePlayerGameMode_Base::Tick(float DeltaSeconds){
     Super::Tick(DeltaSeconds);
     FirstPlayer=Cast<APlayer1>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AGenerateLevel::StaticClass(), FoundActors);
@@ -22,13 +25,13 @@ void ASHOOTACUBEGameModeBase::Tick(float DeltaSeconds){
     PlayerController = Cast<APlayer1Controller >(UGameplayStatics::GetPlayerController(GetWorld(), 0));
 }
 
-void ASHOOTACUBEGameModeBase::BeginPlay(){
+void ASinglePlayerGameMode_Base::BeginPlay(){
     Super::BeginPlay();
-    GetWorldTimerManager().SetTimer(UpdateSeconds,this,&ASHOOTACUBEGameModeBase::UpdateTime,0.001,true);
-    SpawnedControllActor = GetWorld()->SpawnActor<ASpawnGenerateLevel>(GenerateLevelControl,FVector(0,0,0),FRotator(0,0,0));
+    GetWorldTimerManager().SetTimer(UpdateSeconds,this,&ASinglePlayerGameMode_Base::UpdateTime,0.001,true);
+   AShootacubeBaseGameMode::SpawnedControllActor = GetWorld()->SpawnActor<ASpawnGenerateLevel>(AShootacubeBaseGameMode::GenerateLevelControl,FVector(0,0,0),FRotator(0,0,0));
     
 }
-void ASHOOTACUBEGameModeBase::UpdateTime(){
+void ASinglePlayerGameMode_Base::UpdateTime(){
     MillisecondTime++;
     if(MillisecondTime==1000){
         SecondTime++;
@@ -42,7 +45,7 @@ void ASHOOTACUBEGameModeBase::UpdateTime(){
         HourTime++;
 }
 
-void ASHOOTACUBEGameModeBase::CheckToGoToNextLevel(){
+void ASinglePlayerGameMode_Base::CheckToGoToNextLevel(){
    
     for(AActor *Actor:FoundActors){
         AGenerateLevel* LevelGenerate=Cast<AGenerateLevel>(Actor);
@@ -53,7 +56,7 @@ void ASHOOTACUBEGameModeBase::CheckToGoToNextLevel(){
     }
     
 }
-void ASHOOTACUBEGameModeBase::GoToNextLevel(){
+void ASinglePlayerGameMode_Base::GoToNextLevel(){
     if(ReachedMaxNumOFTrue == FoundActors.Num()&& FoundActorsPlayer.Num()==1 && bIsCheck==false){
         GetWorld()->GetTimerManager().PauseTimer(UpdateSeconds);
         PlayerController->AddNextLevelScreen();
@@ -72,11 +75,11 @@ void ASHOOTACUBEGameModeBase::GoToNextLevel(){
         Level++;
         bIsCheck=true;
         FirstPlayer->GetCharacterMovement()->GravityScale=0;
-        GetWorldTimerManager().SetTimer(NextLeavelTimer,this,&ASHOOTACUBEGameModeBase::TheRealGoToNextLevel,3,false);
+        GetWorldTimerManager().SetTimer(NextLeavelTimer,this,&ASinglePlayerGameMode_Base::TheRealGoToNextLevel,3,false);
     }
 }
 
-void ASHOOTACUBEGameModeBase::TheRealGoToNextLevel(){
+void ASinglePlayerGameMode_Base::TheRealGoToNextLevel(){
     GetWorld()->GetTimerManager().UnPauseTimer(UpdateSeconds);
     FirstPlayer->GetCharacterMovement()->GravityScale=1;
    // GetWorld()->SpawnActor<ASpawnGenerateLevel>(GenerateLevelControl,FVector(0,0,0),FRotator(0,0,0));
@@ -84,4 +87,4 @@ void ASHOOTACUBEGameModeBase::TheRealGoToNextLevel(){
     FirstPlayer->SetActorLocation(FVector(0,0,0));
     PlayerController->RemoveNextLevelScreenFromViewPort();
     bIsCheck=false;
-}
+    }

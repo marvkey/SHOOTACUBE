@@ -13,7 +13,7 @@ class SHOOTACUBE_API APlayer1Controller : public APlayerController{
 public:
 	void AddNextLevelScreen();
 	void RemoveNextLevelScreenFromViewPort();
-	
+	APlayer1 *FirstPlayer;
 protected:
 	virtual void BeginPlay() override;
 	virtual  void Tick(float DeltaSeconds) override;
@@ -37,5 +37,4 @@ private:
 	
 	UPROPERTY()
 	UUserWidget* GoToNextLevel;
-	APlayer1 *FirstPlayer;
 };

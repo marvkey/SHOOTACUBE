@@ -16,18 +16,8 @@ void AGun::BeginPlay(){
 
 void AGun::Tick(float DeltaSeconds){
     Super::Tick(DeltaSeconds);
-    OnInteract();
-
     if(Bullet ==nullptr){
-    }
-}
-
-void AGun::OnInteract(){
-    if(GetOwner() != nullptr && num==0){
-        if(APlayer1* Player=Cast<APlayer1>(GetOwner())){
-            Player->AddToInventory(this);
-            num++;
-        }
+        
     }
 }
 
@@ -41,11 +31,11 @@ void AGun::Shoot(){
     }else{
          if(MagazineSizeMinused > 0){
              if(Bullet != nullptr ){
-                    FVector SpawnLocation =Bullet->GetComponentLocation();
-                    FRotator SpawnRotaion=Bullet->GetComponentRotation();
-                    ABullet* SpawnedBullet=GetWorld()->SpawnActor<ABullet>(BulletSpawned,SpawnLocation,SpawnRotaion);
-                    SpawnedBullet->SetOwner(this);
-                    MagazineSizeMinused--;
+                FVector SpawnLocation =Bullet->GetComponentLocation();
+                FRotator SpawnRotaion=Bullet->GetComponentRotation();
+                ABullet* SpawnedBullet=GetWorld()->SpawnActor<ABullet>(BulletSpawned,SpawnLocation,SpawnRotaion);
+                SpawnedBullet->SetOwner(this);
+                MagazineSizeMinused--;
              }
         }else{
             GEngine->AddOnScreenDebugMessage(-1,2,FColor::Red,FString::Printf(TEXT("No More GunMagazine Relode")));

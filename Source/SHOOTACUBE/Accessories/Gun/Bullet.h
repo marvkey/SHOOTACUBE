@@ -22,22 +22,15 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Effects")
 	UParticleSystem* HitParticle;
 
-	UPROPERTY(BlueprintReadWrite)
-	float DamageSize;
-
 	UPROPERTY(EditAnywhere, Category = "Effects")
-	UParticleSystemComponent* ParticleTrail;
-	
+	UParticleSystemComponent* ParticleTrail;	
 protected:
 	virtual void BeginPlay() override;
 private:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	AActor* MyOwner=nullptr;
-	AActor* MyOwnersOwner=nullptr;
 	UPROPERTY(EditAnywhere, Category="Component")
 	TSubclassOf<UDamageType>DamageType;
-
-	FVector StartLocation;
-
+	TArray<AActor*>AllPlayer;
 };

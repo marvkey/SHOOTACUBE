@@ -27,7 +27,6 @@ void AChest::Tick(float DeltaTime){
 	Super::Tick(DeltaTime);
 }
 void AChest::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
-	
 	if(OtherActor!= nullptr && OtherActor->IsA(APlayer1::StaticClass())){
 		APlayer1* Player=Cast<APlayer1>(OtherActor);
 		if(Player->bIsAi==false){
@@ -36,7 +35,6 @@ void AChest::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 			FActorSpawnParameters SpawnParam;
 			RandomNumber=FMath::RandRange(0,SpawningGuns.Num()-1);
 			Gun=GetWorld()->SpawnActor<AGun>(SpawningGuns[RandomNumber],SpawnLocation,RotationSpawn,SpawnParam);
-		
 			Gun->SetActorLocation(this->GetActorLocation());
 			if(Gun->GetAmmoOfGun() ==AmmoType::SmallAmmo){
 				GetWorld()->SpawnActor<AAmmo>(SpawnAmmo[0], SpawnLocation, RotationSpawn, SpawnParam);
@@ -46,10 +44,29 @@ void AChest::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 			
 			}else if(Gun->GetAmmoOfGun()==AmmoType::RocketLuncherAmmo){
 				GetWorld()->SpawnActor<AAmmo>(SpawnAmmo[2],SpawnLocation,RotationSpawn,SpawnParam);
-
 			}
 		}
 		this->Destroy();
 	}
+}
+
+void AChest::Open(){
+	FVector SpawnLocation(this->GetActorLocation().X,this->GetActorLocation().Y,this->GetActorLocation().Z);
+	FRotator  RotationSpawn(0,0,0);
+	FActorSpawnParameters SpawnParam;
+	RandomNumber=FMath::RandRange(0,SpawningGuns.Num()-1);
+	Gun=GetWorld()->SpawnActor<AGun>(SpawningGuns[RandomNumber],SpawnLocation,RotationSpawn,SpawnParam);
+	Gun->SetActorLocation(this->GetActorLocation());
+	if(Gun->GetAmmoOfGun() ==AmmoType::SmallAmmo){
+		GetWorld()->SpawnActor<AAmmo>(SpawnAmmo[0], SpawnLocation, RotationSpawn, SpawnParam);
+	}
+	else if(Gun->GetAmmoOfGun() ==AmmoType::MediumAmmo){
+		GetWorld()->SpawnActor<AAmmo>(SpawnAmmo[1],SpawnLocation,RotationSpawn,SpawnParam);
+			
+	}else if(Gun->GetAmmoOfGun()==AmmoType::RocketLuncherAmmo){
+		GetWorld()->SpawnActor<AAmmo>(SpawnAmmo[2],SpawnLocation,RotationSpawn,SpawnParam);
+	}
+	bHasOpened =true;
+	this->Destroy();
 }
 

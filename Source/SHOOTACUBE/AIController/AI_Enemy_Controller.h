@@ -11,18 +11,28 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 protected:
 	virtual void BeginPlay()override;
-	
 private:
 	void Shoot();
 	void MoveToPlayer();
 	void PlayerIsTooClose(); // Basically what hapens if the palyer is to close to us.
 	float DistaneFromPlayer();
+	void ConstantMoving();
 	UPROPERTY(EditAnywhere,Category="AI Functions")
 	float AcceptableRadius=1000;
 	
-	class APlayer1* FirstPlayer;
+	class APawn* FirstPlayer;
 	FTimerHandle UpdateSeconds;
-	APlayer1* GetControlledcharacter;
+	class APlayer1* GetControlledcharacter;
 	FVector StartLocation;
-	
+	UPROPERTY(EditAnywhere,Category="AI Functions")
+	float MinMovement =3000;
+	UPROPERTY(EditAnywhere,Category="AI Functions")
+	float MaxMovement =6000;
+	FVector LoctionToMove ={1,1,0};
+	int beginMove =0 ;
+
+	FTimerHandle ShootTimerHandle;
+	FTimerHandle CallWaitBeginPlay;
+	float GunShootRate;
+	void WaitBeginePlay();
 };

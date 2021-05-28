@@ -11,6 +11,5 @@ AAccessories::AAccessories(){
 	RootComponent=Collider;
 	SkeletalMesh=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Skeletal Mesh"));
 	SkeletalMesh->SetupAttachment(RootComponent);
-
 }
 

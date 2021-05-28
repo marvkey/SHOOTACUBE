@@ -14,7 +14,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	UPROPERTY(EditAnywhere, Category="Collider")
 	class USkeletalMeshComponent* SkeletalMesh;
-
+	void Open();
+	bool bHasOpened =false;
 protected:
 	virtual void BeginPlay() override;
 private:

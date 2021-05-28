@@ -6,32 +6,35 @@
 APlayer1Controller::APlayer1Controller(){}
 void  APlayer1Controller::BeginPlay(){
     Super::BeginPlay();
-    
     HUD=CreateWidget(this,PlayerHud);
     if(HUD != nullptr){
         HUD->AddToViewport();
     }
     PlayerGunHUD=CreateWidget(this,GunHud);
     GoToNextLevel=CreateWidget(this,NextLevelScreen);
+    
 }
 void  APlayer1Controller::Tick(float DeltaSeconds){
     Super::Tick(DeltaSeconds);
-    
-    FirstPlayer=Cast<APlayer1>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+    FirstPlayer=Cast<APlayer1>(GetPawn());
     if(FirstPlayer== nullptr){
         this->RemoveViewport();
         return;
-    }
-    if(PlayerGunHUD->IsInViewport()){
-        if(FirstPlayer->CurrentGun  == nullptr){
-            PlayerGunHUD->RemoveFromViewport();
+    }else{
+        
+        if(PlayerGunHUD->IsInViewport()){
+            if(FirstPlayer->CurrentGun  == nullptr){
+                PlayerGunHUD->RemoveFromViewport();
+            }
         }
+        if(PlayerGunHUD->IsInViewport()==false){
+            if(FirstPlayer->CurrentGun  != nullptr){
+                PlayerGunHUD->AddToViewport();
+            }   
+        }
+        
     }
-    if(PlayerGunHUD->IsInViewport()==false){
-        if(FirstPlayer->CurrentGun  != nullptr){
-            PlayerGunHUD->AddToViewport();
-        }   
-    }
+    
 }
 void APlayer1Controller::RemoveViewport(){
     HUD->RemoveFromViewport();

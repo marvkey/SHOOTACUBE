@@ -29,5 +29,5 @@ protected:
     void TakeDamage(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
 private:
 	void KillOwner();
-	void TakeDamageShield(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	void TakeDamageShield(AActor* DamageActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser); // does not get called at all by any std::funton
 };

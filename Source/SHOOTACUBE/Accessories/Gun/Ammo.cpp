@@ -22,13 +22,14 @@ void AAmmo::Tick(float DeltaSeconds){
 
 AmmoType AAmmo::GetAmmoTypeToBeSpawned(){
     return AmmoTypeToBeSpawned;
-}g
+}
 
 void AAmmo::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult){
     if(OtherActor && OtherActor != this){
         GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin"));
         if(OtherActor->IsA(APlayer1::StaticClass())){
             APlayer1 * FirstPlayer =Cast<APlayer1>(OtherActor);
+            if(FirstPlayer->bIsAi == true){return;}
             if(this->AmmoTypeToBeSpawned ==AmmoType::SmallAmmo){
                 FirstPlayer->SmallBulletsAmmo+=AmmoToBeSpawned;
             }else if(AmmoTypeToBeSpawned ==AmmoType::MediumAmmo){

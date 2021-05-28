@@ -12,36 +12,50 @@ ABullet::ABullet(){
     ParticleTrail = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("Particle system"));
     ParticleTrail->SetupAttachment(SkeletalMesh);
 }
+
 void ABullet::BeginPlay(){
     Super::BeginPlay();
     Collider->OnComponentHit.AddDynamic(this,&ABullet::OnHit);
-    StartLocation=GetActorLocation();
     UGameplayStatics::PlaySoundAtLocation(this,LunchSound,GetActorLocation());
 }
 
-void  ABullet::Tick(float DeltaSeconds){
+void ABullet::Tick(float DeltaSeconds){
     Super::Tick(DeltaSeconds);
-    if(GetOwner() != nullptr){
-        MyOwner=GetOwner();
-        if(GetOwner()->GetOwner() != nullptr){
-            MyOwnersOwner=GetOwner()->GetOwner();
-        }
-    }
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayer1::StaticClass(), AllPlayer);
 }
 void ABullet::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit){
-    GEngine->AddOnScreenDebugMessage(-1,2,FColor::Red,FString::Printf(TEXT("We hit an actor")));
-    UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
-    UGameplayStatics::SpawnEmitterAtLocation(this,HitParticle, GetActorLocation());
+    /* removign Health will be taken care of in the Health system Component */
+    if(GetOwner()== nullptr){
+        return;
+    }
+    ParticleTrail->SetHiddenInGame(true);
     
-    if(OtherActor && (OtherActor->IsA(APlayer1::StaticClass())) && (OtherActor != MyOwner) && (OtherActor !=MyOwnersOwner)){
-        APlayer1* DamagedPlayer=Cast<APlayer1>(OtherActor);
-        AGun* CurrentGun=Cast<AGun>(GetOwner());
-        if(CurrentGun->GetAmmoOfGun()==AmmoType::SmallAmmo || CurrentGun->GetAmmoOfGun()==AmmoType::MediumAmmo){
-            UGameplayStatics::ApplyDamage(DamagedPlayer,CurrentGun->GunDamage,MyOwnersOwner->GetInstigatorController(),MyOwnersOwner,DamageType);
-            GEngine->AddOnScreenDebugMessage(-1,2,FColor::Red,FString::Printf(TEXT("We Hit a Player we Gave Damage %F and the Player has a Health of %F "),CurrentGun->GunDamage,DamagedPlayer->GetHealthRemaining()));
-        }else if(CurrentGun->GetAmmoOfGun() ==AmmoType::RocketLuncherAmmo){
-            DamageSize=CurrentGun->GunDamage;
-            UGameplayStatics::ApplyRadialDamage(GetWorld(),CurrentGun->GunDamage,GetActorLocation(), CurrentGun->DamageRadiusRokcetLuncher,DamageType,TArray<AActor*>(),MyOwnersOwner,MyOwnersOwner->GetInstigatorController());
+    if(OtherActor && (OtherActor !=GetOwner()->GetOwner())){
+        if(GetOwner() != nullptr){
+            AGun* CurrentGun=Cast<AGun>(GetOwner());
+            if(CurrentGun->GetGunType() != GunType::RocketLuncher){
+                UGameplayStatics::ApplyDamage(
+                    OtherActor,
+                    CurrentGun->GunDamage,
+                    GetOwner()->GetInstigatorController(),
+                    GetOwner()->GetOwner(),
+                    DamageType);
+                UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+                UGameplayStatics::SpawnEmitterAtLocation(this,HitParticle, GetActorLocation());
+            }else{
+                // UGameplayStatics::ApplyRadialDamage(GetWorld(),CurrentGun->GunDamage,GetActorLocation(), CurrentGun->DamageRadiusRokcetLuncher,DamageType,Ignore,GetOwner()->GetOwner(),GetOwner()->GetOwner()->GetInstigatorController(),true);
+                for(AActor* Players: AllPlayer){
+                    if(Players->IsA(APlayer1::StaticClass())){
+                        if(Players == GetOwner()->GetOwner()){
+                            continue;
+                        }
+                        if(FVector::Dist(this->GetActorLocation(),Players->GetActorLocation())  <=CurrentGun->DamageRadiusRokcetLuncher){
+                            UGameplayStatics::ApplyDamage(Players,CurrentGun->GunDamage,GetOwner()->GetOwner()->GetInstigatorController(),this,DamageType);
+                        }
+                    }
+                }
+            }
         }
     }
+    this->Destroy();
 }

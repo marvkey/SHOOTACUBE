@@ -27,49 +27,29 @@ class SHOOTACUBE_API AGun : public AAccessories
 	AGun();
 	void Shoot();
 	AmmoType GetAmmoOfGun();
+	GunType GetGunType(){return TypeOfGun;}
 	void RelodeGun(AGun* GunToRelode,int32 &SmallBulletsAmmo, int32 &MediumBulletAmmo, int32 &RocketLuncherAmmo);
 	UPROPERTY(EditAnywhere, Category="GunStats")
     float GunDamage=10;
-	void OnInteract();
-	int32 num =0;
-	UPROPERTY(EditAnywhere, Category="GunStats")
-	float DamageRadiusRokcetLuncher;
-
-	UPROPERTY(EditAnywhere, Category="GunStats")
-	int32 MagazineSize=20;
-
 	
-	
-	UPROPERTY(EditAnywhere, Category="GunStats")
-	int32 MagazineSizeMinused;
-
-	UPROPERTY(EditAnywhere,Category="Relode Time")
-	float RelodeTime=2;
+	UPROPERTY(EditAnywhere, Category="GunStats") float DamageRadiusRokcetLuncher;
+	UPROPERTY(EditAnywhere, Category="GunStats") int32 MagazineSize=20;
+	UPROPERTY(EditAnywhere, Category="GunStats") int32 MagazineSizeMinused;
+	UPROPERTY(EditAnywhere,Category="Relode Time") float RelodeTime=2;
 protected:
-
 	virtual void BeginPlay() override;
-	
 private:
 	void RelodeSmallBulletGun(AGun* GunToRelode, int32 &SmallBulletAmmo);
 	void RelodeMediumBulletGun(AGun* GunToRelode, int32 &MediumBulletAmmo);
 	void RelodeRocketLuncherGun(AGun* GunToRelode, int32 &RocketLuncherAmmo);
 	void OnAttachToPlayer();
+	UPROPERTY(EditAnywhere, Category="GunStats") float GunFireRate=2.0f;
+	UPROPERTY(EditAnywhere, Category="Animation") class UAnimationAsset* RelodeAnimation;
 	
-	UPROPERTY(EditAnywhere, Category="GunStats")
-	float GunFireRate=2.0f;
+	UPROPERTY(EditAnywhere, Category="GunStats") AmmoType AmmoOfGun=AmmoType::SmallAmmo;
 	
-	UPROPERTY(EditAnywhere, Category="Animation")
-	class UAnimationAsset* RelodeAnimation;
+	UPROPERTY(EditAnywhere, Category ="GunStats") GunType TypeOfGun = GunType::Pistol;
 	
-	UPROPERTY(EditAnywhere, Category="GunStats")
-	AmmoType AmmoOfGun=AmmoType::SmallAmmo;
-	
-	UPROPERTY(EditAnywhere, Category ="GunStats")
-	GunType TypeOfGun = GunType::Pistol;
-	
-	UPROPERTY(EditAnywhere, Category="Ammo")
-	USceneComponent* Bullet;
-
-	UPROPERTY(EditAnywhere, Category="Ammo")
-	TSubclassOf<class ABullet>BulletSpawned;
+	UPROPERTY(EditAnywhere, Category="Ammo") USceneComponent* Bullet;
+	UPROPERTY(EditAnywhere, Category="Ammo")TSubclassOf<class ABullet>BulletSpawned;
 };

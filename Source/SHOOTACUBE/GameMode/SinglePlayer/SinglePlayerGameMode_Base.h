@@ -1,16 +1,19 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
-// Copyright Epic Games, Inc. All Rights Reserved.
-#pragma once
+
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
-#include "SHOOTACUBEGameModeBase.generated.h"
+#include "SHOOTACUBE/GameMode/ShootacubeBaseGameMode.h"
+#include "SinglePlayerGameMode_Base.generated.h"
+
+/**
+ * 
+ */
 UCLASS()
-class SHOOTACUBE_API ASHOOTACUBEGameModeBase : public AGameModeBase{
+class SHOOTACUBE_API ASinglePlayerGameMode_Base : public AShootacubeBaseGameMode{
 	GENERATED_BODY()
 	public:
 	virtual void Tick(float DeltaSeconds) override;
-	ASHOOTACUBEGameModeBase();
 	void GoToNextLevel();
 	void UpdateTime();
 	void CheckToGoToNextLevel();
@@ -35,16 +38,14 @@ class SHOOTACUBE_API ASHOOTACUBEGameModeBase : public AGameModeBase{
 	TArray<AActor*> FoundActorsPlayer;
 	TArray<AActor*>Hallway;
 	TArray<AActor*>SpawnControll;
-	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category="Time")
-	TSubclassOf<class ASpawnGenerateLevel>GenerateLevelControl;
-	class ASpawnGenerateLevel* SpawnedControllActor;
 
 	class APlayer1 *FirstPlayer;
 	int32 ReachedMaxNumOFTrue;
 
-protected:
+	protected:
 	virtual void BeginPlay() override;
-private:
+	
+	private:
 	class APlayer1Controller* PlayerController ;
 	bool bIsCheck=false; // cheks if function is already on the tick
 };
